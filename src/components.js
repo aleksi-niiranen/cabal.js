@@ -1,11 +1,11 @@
-cabal.components = (function () {
+(function (cabal) {
     var mod = {};
 
     var utils = {};
 
     utils.mapToRow = function (rowData) {
         if (!rowData) return [];
-        var row = _.map(rowData, function (current) {
+        var row = rowData.map(function (current) {
             return (React.DOM.td({}, mod[current.type]({element: current.element, inputs: current.inputs})));
         });
         return row;
@@ -13,10 +13,26 @@ cabal.components = (function () {
 
     utils.mapToRows = function (rowsData) {
         if (!rowsData) return [];
-        var rows = _.map(rowsData, function (current) {
-            return mod.DataTableRow({rowData: current});
+        var rows = rowsData.map(function (current) {
+            return mod.TableRow({rowData: current});
         });
         return rows;
+    };
+
+    utils.mapToListItems = function (itemsData) {
+        if (!itemsData) return [];
+        var items = itemsData.map(function (current) {
+            return (React.DOM.li({}, utils.mapToListItem(current)));
+        });
+        return items;
+    };
+
+    utils.mapToListItem = function (itemData) {
+        if (!itemData) return [];
+        var item = itemData.map(function (current) {
+            return mod[current.type]({element: current.element, inputs: current.inputs});
+        });
+        return item;
     };
 
     mod.Link = React.createClass({
@@ -61,7 +77,7 @@ cabal.components = (function () {
         }
     });
 
-    mod.DataTableRow = React.createClass({
+    mod.TableRow = React.createClass({
         render: function () {
             return (React.DOM.tr({}, utils.mapToRow(this.props.rowData)));
         }
@@ -70,7 +86,7 @@ cabal.components = (function () {
     mod.TableHead = React.createClass({
         render: function () {
             return (React.DOM.thead({
-            }, (React.DOM.tr({}, _.map(this.props.headers, function (current) {
+            }, (React.DOM.tr({}, this.props.headers.map(function (current) {
                 return mod[current.type]({inputs: current.inputs});
             })))));
         }
@@ -93,10 +109,11 @@ cabal.components = (function () {
         }
     });
 
-    mod.Container = React.createClass({
+    mod.List = React.createClass({
         render: function () {
-            return (React.DOM.div({
-            }));
+            return (React.DOM.ul({
+                className: 'cabal-list'
+            }, [utils.mapToListItems(this.props.data)]));
         }
     });
 
@@ -110,5 +127,5 @@ cabal.components = (function () {
         });
     };
 
-    return mod;
-})();
+    cabal.components = mod;
+})(cabal);

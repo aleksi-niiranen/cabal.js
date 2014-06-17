@@ -1,4 +1,4 @@
-cabal.mapper = (function () {
+(function (cabal) {
     var mod = {};
 
     var CabalProperty = function (name) {
@@ -38,5 +38,5 @@ cabal.mapper = (function () {
         return fn;
     };
 
-    return mod;
-})();
+    cabal.mapper = mod;
+})(cabal);
