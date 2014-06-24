@@ -63,8 +63,6 @@
 
     mod.ItemLabel = React.createClass({
         render: function () {
-            var lbl = this.props.inputs.children + ": ";
-            this.props.inputs.children = lbl;
             return (React.DOM.b(this.props.inputs));
         }
     });

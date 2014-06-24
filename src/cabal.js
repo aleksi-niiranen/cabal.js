@@ -79,7 +79,7 @@
 
     cabal.ListItemLabels = function (columns) {
         var labels = columns.map(function (column) {
-            return { type: 'ItemLabel', inputs: { children: column } };
+            return { type: 'ItemLabel', inputs: { children: column + ": " } };
         });
         return labels;
     };
