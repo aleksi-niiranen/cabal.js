@@ -32,11 +32,13 @@ var cabalmap = (function () {
 
 var caballist = (function () {
     var labels = cabal.ListItemLabels([
-        'Name'
+        'Name',
+        'Title'
     ]);
 
     var propertymappings = cabal.Properties([
         cabal.mapper.property('DisplayName'),
+        cabal.mapper.property('Title'),
     ]);
 
     return { labels: labels, properties: propertymappings };
