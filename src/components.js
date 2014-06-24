@@ -20,17 +20,22 @@
     };
 
     utils.mapToListItems = function (itemsData) {
-        if (!itemsData) return [];
-        var items = itemsData.map(function (current) {
-            return (React.DOM.li({}, utils.mapToListItem(current)));
+        if (!itemsData.data) return [];
+        var items = itemsData.data.map(function (current) {
+            return (React.DOM.li({}, utils.mapToListItem(current, itemsData.labels)));
         });
         return items;
     };
 
-    utils.mapToListItem = function (itemData) {
+    utils.mapToListItem = function (itemData, isLast, labels) {
         if (!itemData) return [];
-        var item = itemData.map(function (current) {
-            return mod[current.type]({element: current.element, inputs: current.inputs});
+        var totalLength = itemData.length - 1;
+        var item = itemData.map(function (current, index) {
+            var isLast = totalLength === index;
+            return React.DOM.span({}, 
+                                  [(labels ? mod[labels[index].type]({inputs: labels[index].inputs}) : undefined), 
+                                  mod[current.type]({element: current.element, inputs: current.inputs}), 
+                                  (isLast ? React.DOM.br({}) : undefined)]);
         });
         return item;
     };
@@ -53,6 +58,14 @@
     mod.HeaderColumn = React.createClass({
         render: function () {
             return (React.DOM.th(this.props.inputs));
+        }
+    });
+
+    mod.ItemLabel = React.createClass({
+        render: function () {
+            var lbl = this.props.inputs.children + ": ";
+            this.props.inputs.children = lbl;
+            return (React.DOM.b(this.props.inputs));
         }
     });
 
@@ -113,7 +126,7 @@
         render: function () {
             return (React.DOM.ul({
                 className: 'cabal-list'
-            }, [utils.mapToListItems(this.props.data)]));
+            }, [utils.mapToListItems({labels: this.props.labels, data: this.props.data})]));
         }
     });
 

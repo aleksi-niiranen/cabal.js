@@ -46,6 +46,7 @@
     var traverseAttributes = function (attr, data, indexes) {
         var cstr = cabal.mapper.property().constructor;
         var trAttr = {};
+        // TODO: switch to Object.keys?
         for (var key in attr) {
             var value = attr[key];
             if(value instanceof cstr) {
@@ -76,6 +77,12 @@
         return headers;
     };
 
+    cabal.ListItemLabels = function (columns) {
+        var labels = columns.map(function (column) {
+            return { type: 'ItemLabel', inputs: { children: column } };
+        });
+        return labels;
+    };
 
     cabal.Properties = function (properties) {
         var propertyMap = {};
@@ -99,7 +106,7 @@
     app.prototype.List = function (columnMappings, parent) {
         var data = this.preRender(columnMappings.properties);
         React.renderComponent(
-            cabal.components.List({ data: data }), parent);
+            cabal.components.List({ labels: columnMappings.labels, data: data }), parent);
     };
 
     if (typeof(root.cabal) === 'undefined') {
