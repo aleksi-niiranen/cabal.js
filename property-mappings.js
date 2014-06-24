@@ -1,7 +1,7 @@
 var cabalmap = (function () {
     cabal.components.extend('StatusText', function () {
         var value = this.props.inputs.children; 
-        if (value === 'Ongoing') this.props.inputs.className = 'green';
+        if (value === 'In Progress') this.props.inputs.className = 'green';
         else if (value === 'Onhold') this.props.inputs.className = 'orange';
         else this.props.inputs.className = 'red';
         return (React.DOM.span(this.props.inputs));
@@ -10,18 +10,16 @@ var cabalmap = (function () {
     // row columns are rendered in the order they are passed to
     // property mappings
     var headers = cabal.TableColumnHeaders([
-        'Ratkaisu',
-        'Pvm',
-        'Projektin tyyppi',
-        'Tila',
-        'Asiakas'
+        'Project',
+        'Due Date',
+        'Status',
+        'Customer'
     ]);
 
     // rendered properties
     var pm = cabal.Properties([
         cabal.mapper.property('Title').as('Link').attributes({ href: cabal.mapper.property('SiteName') }),
         cabal.mapper.property('DateOfAction').as('DateTime'),
-        cabal.mapper.property('ProjectType'),
         cabal.mapper.property('ProjectStatus').as('StatusText'),
         cabal.mapper.property('Customer'),
     ]);
@@ -33,12 +31,14 @@ var cabalmap = (function () {
 var caballist = (function () {
     var labels = cabal.ListItemLabels([
         'Name',
-        'Title'
+        'Title',
+        'Avatar'
     ]);
 
     var propertymappings = cabal.Properties([
         cabal.mapper.property('DisplayName'),
         cabal.mapper.property('Title'),
+        cabal.mapper.property('PictureURL').as('Image')
     ]);
 
     return { labels: labels, properties: propertymappings };
@@ -46,44 +46,38 @@ var caballist = (function () {
 
 var results = [
     [{ Name: 'Title', Value: 'Provision of Customer Relationship Management System', Type: 'Edm.String' },
-     { Name: 'Customer', Value: 'Jeff Bailey', Type: 'Edm.String' },
-     { Name: 'ProjectType', Value: 'Consulting', Type: 'Edm.String' },
+     { Name: 'Customer', Value: 'Carmen May', Type: 'Edm.String' },
      { Name: 'DateOfAction', Value: (new Date(2014, 6, 24)).toISOString(), Type: 'Edm.DateTime' },
      { Name: 'SiteName', Value: 'http://www.google.com', Type: 'Edm.String' },
-     { Name: 'ProjectStatus', Value: 'Ongoing', Type: 'Edm.String' }],
+     { Name: 'ProjectStatus', Value: 'In Progress', Type: 'Edm.String' }],
 
     [{ Name: 'Title', Value: 'Framework for Executive Search and Recruitment', Type: 'Edm.String' },
-     { Name: 'Customer', Value: 'Dr McNinja', Type: 'Edm.String' },
-     { Name: 'ProjectType', Value: 'Surgical Strike', Type: 'Edm.String' },
+     { Name: 'Customer', Value: 'Joshua Harris', Type: 'Edm.String' },
      { Name: 'DateOfAction', Value: (new Date(2014, 7, 7)).toISOString(), Type: 'Edm.DateTime' },
      { Name: 'SiteName', Value: 'http://virta.baz', Type: 'Edm.String' },
      { Name: 'ProjectStatus', Value: 'Onhold', Type: 'Edm.String' }],
 
     [{ Name: 'Title', Value: 'Innovative Ship to Shore Ferry Charging Solution', Type: 'Edm.String' },
-     { Name: 'Customer', Value: 'Dr McNinja', Type: 'Edm.String' },
-     { Name: 'ProjectType', Value: 'Surgical Strike', Type: 'Edm.String' },
-     { Name: 'DateOfAction', Value: (new Date(2014, 6, 23)).toISOString(), Type: 'Edm.DateTime' },
+     { Name: 'Customer', Value: 'Mario Castro', Type: 'Edm.String' },
+     { Name: 'DateOfAction', Value: (new Date(2014, 9, 28)).toISOString(), Type: 'Edm.DateTime' },
      { Name: 'SiteName', Value: 'http://virta.baz', Type: 'Edm.String' },
-     { Name: 'ProjectStatus', Value: 'Onhold', Type: 'Edm.String' }],
+     { Name: 'ProjectStatus', Value: 'In Progress', Type: 'Edm.String' }],
 
     [{ Name: 'Title', Value: 'Installation of Energy Efficiency Measures', Type: 'Edm.String' },
-     { Name: 'Customer', Value: 'Dr McNinja', Type: 'Edm.String' },
-     { Name: 'ProjectType', Value: 'Surgical Strike', Type: 'Edm.String' },
+     { Name: 'Customer', Value: 'Lonnie Hunt', Type: 'Edm.String' },
      { Name: 'DateOfAction', Value: (new Date(2014, 8, 11)).toISOString(), Type: 'Edm.DateTime' },
      { Name: 'SiteName', Value: 'http://virta.baz', Type: 'Edm.String' },
-     { Name: 'ProjectStatus', Value: 'Onhold', Type: 'Edm.String' }],
+     { Name: 'ProjectStatus', Value: 'In Progress', Type: 'Edm.String' }],
 
     [{ Name: 'Title', Value: 'Replacement Pipework', Type: 'Edm.String' },
-     { Name: 'Customer', Value: 'Dr McNinja', Type: 'Edm.String' },
-     { Name: 'ProjectType', Value: 'Surgical Strike', Type: 'Edm.String' },
+     { Name: 'Customer', Value: 'Emma Howard', Type: 'Edm.String' },
      { Name: 'DateOfAction', Value: (new Date(2014, 7, 11)).toISOString(), Type: 'Edm.DateTime' },
      { Name: 'SiteName', Value: 'http://virta.baz', Type: 'Edm.String' },
      { Name: 'ProjectStatus', Value: 'Onhold', Type: 'Edm.String' }],
 
     [{ Name: 'Title', Value: 'Broadcasting Equipment and Associated Infrastructure', Type: 'Edm.String' },
-     { Name: 'Customer', Value: 'Dan McNinja', Type: 'Edm.String' },
-     { Name: 'ProjectType', Value: 'Infiltration', Type: 'Edm.String' },
-     { Name: 'DateOfAction', Value: (new Date(2014, 6, 24)).toISOString(), Type: 'Edm.DateTime' },
+     { Name: 'Customer', Value: 'George Hudson', Type: 'Edm.String' },
+     { Name: 'DateOfAction', Value: (new Date(2014, 6, 22)).toISOString(), Type: 'Edm.DateTime' },
      { Name: 'SiteName', Value: 'http://mcninja.com', Type: 'Edm.String' },
      { Name: 'ProjectStatus', Value: 'Late', Type: 'Edm.String' }]
 ];
