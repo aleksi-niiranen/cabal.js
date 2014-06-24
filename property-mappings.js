@@ -31,11 +31,15 @@ var cabalmap = (function () {
 })();
 
 var caballist = (function () {
+    var labels = cabal.ListItemLabels([
+        'Name'
+    ]);
+
     var propertymappings = cabal.Properties([
         cabal.mapper.property('DisplayName'),
     ]);
 
-    return { properties: propertymappings };
+    return { labels: labels, properties: propertymappings };
 })();
 
 var results = [
