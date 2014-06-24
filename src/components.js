@@ -35,7 +35,7 @@
             return React.DOM.span({}, 
                                   [(labels ? mod[labels[index].type]({inputs: labels[index].inputs}) : undefined), 
                                   mod[current.type]({element: current.element, inputs: current.inputs}), 
-                                  (isLast ? React.DOM.br({}) : undefined)]);
+                                  (!isLast ? React.DOM.br({}) : undefined)]);
         });
         return item;
     };
