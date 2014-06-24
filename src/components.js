@@ -27,7 +27,7 @@
         return items;
     };
 
-    utils.mapToListItem = function (itemData, isLast, labels) {
+    utils.mapToListItem = function (itemData, labels) {
         if (!itemData) return [];
         var totalLength = itemData.length - 1;
         var item = itemData.map(function (current, index) {
