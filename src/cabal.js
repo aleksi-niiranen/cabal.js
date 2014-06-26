@@ -14,10 +14,10 @@
         var properties = { rendered: [], all: {} };
         this.result.forEach(function (row) {
             if (mappings.propertiesToRender.length === 0) {
-                data.push(rowRenderer(properties, row, mappings));
+                data.push(rowRenderer(properties, row.Cells.results, mappings));
                 return;
             }
-            row.forEach(function (mp, index) {
+            row.Cells.results.forEach(function (mp, index) {
                 var renderingIndex = mappings.propertiesToRender.indexOf(mp.Name);
                 if (renderingIndex > -1) {
                     properties.rendered.push({ ri: renderingIndex, pi: index});
@@ -28,7 +28,7 @@
             mappings.propertiesToRender.forEach(function (property, index) {
                 if (property !== null) properties.rendered.push({ ri: index });
             });
-            data.push(rowRenderer(properties, row, mappings));
+            data.push(rowRenderer(properties, row.Cells.results, mappings));
             mappings.propertiesToRender = [];
         });
         return data;
