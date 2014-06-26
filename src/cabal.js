@@ -18,12 +18,12 @@
                 return;
             }
             row.Cells.results.forEach(function (mp, index) {
-                var renderingIndex = mappings.propertiesToRender.indexOf(mp.Name);
+                var renderingIndex = mappings.propertiesToRender.indexOf(mp.Key);
                 if (renderingIndex > -1) {
                     properties.rendered.push({ ri: renderingIndex, pi: index});
                     mappings.propertiesToRender.splice(renderingIndex, 1, null);
                 }
-                properties.all[mp.Name] = index;
+                properties.all[mp.Key] = index;
             });
             mappings.propertiesToRender.forEach(function (property, index) {
                 if (property !== null) properties.rendered.push({ ri: index });
