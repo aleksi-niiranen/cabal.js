@@ -3,7 +3,7 @@
 
     var CabalProperty = function (name) {
         this.name = name;
-        this.componentType = 'TextNode';
+        this.componentType = 'Text';
     };
 
     CabalProperty.prototype.attributes = function (attributeMap) {

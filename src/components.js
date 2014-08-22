@@ -67,7 +67,7 @@
         }
     });
 
-    mod.TextNode = React.createClass({
+    mod.Text = React.createClass({
         render: function () {
             return (React.DOM.span(this.props.inputs));
         }

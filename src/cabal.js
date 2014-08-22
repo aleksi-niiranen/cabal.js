@@ -64,6 +64,7 @@
         // seriously unoptimized
         // we only want to sort once
         // now we sort once for every row
+        // TODO: optimize
         var rendered = propertyInformation.rendered.sort(function (a, b) {
             return a.ri - b.ri;
         });
@@ -79,18 +80,12 @@
 
     cabal.VERSION = "0.2.0";
 
-    cabal.TableColumnHeaders = function (columns) {
+    cabal.Headers = function (columns, type, fn) {
         var headers = columns.map(function (column) {
-            return { type: 'HeaderColumn', inputs: { children: column } };
+            return { type: type, 
+                inputs: { children: column } };
         });
         return headers;
-    };
-
-    cabal.ListItemLabels = function (columns) {
-        var labels = columns.map(function (column) {
-            return { type: 'ItemLabel', inputs: { children: column + ": " } };
-        });
-        return labels;
     };
 
     cabal.Properties = function (properties) {
