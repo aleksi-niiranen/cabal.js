@@ -22,7 +22,7 @@
     utils.mapToListItems = function (itemsData) {
         if (!itemsData.data) return [];
         var items = itemsData.data.map(function (current) {
-            return (React.DOM.li({}, utils.mapToListItem(current, itemsData.labels)));
+            return (React.DOM.li({}, utils.mapToListItem(current, itemsData.headers)));
         });
         return items;
     };
@@ -124,7 +124,7 @@
         render: function () {
             return (React.DOM.ul({
                 className: 'cabal-list'
-            }, [utils.mapToListItems({labels: this.props.labels, data: this.props.data})]));
+            }, [utils.mapToListItems({headers: this.props.headers, data: this.props.data})]));
         }
     });
 

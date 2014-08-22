@@ -2,17 +2,20 @@
  * Requires IE9 or later
  */
 (function (root) {
-    var cabal = {};
-    cabal.VERSION = "0.1.0";
+    var Cabal = function (columnMappings, component) {
+        var cm = columnMappings,
+            c = component;
 
-    var app = function (result) {
-        this.result = result;
+        return function (result, parent) {
+            var data = preRender(cm.properties, result);
+            React.renderComponent(c({ headers: cm.headers, data: data }), parent);
+        };
     };
 
-    app.prototype.preRender = function (mappings) {
+    var preRender = function (mappings, result) {
         var data = [];
         var properties = { rendered: [], all: {} };
-        this.result.forEach(function (row) {
+        result.forEach(function (row) {
             if (mappings.propertiesToRender.length === 0) {
                 data.push(rowRenderer(properties, row.Cells.results, mappings));
                 return;
@@ -70,6 +73,12 @@
         return row;
     };
 
+    var cabal = function cabal (columnMappings, component) {
+        return Cabal(columnMappings, component);
+    };
+
+    cabal.VERSION = "0.2.0";
+
     cabal.TableColumnHeaders = function (columns) {
         var headers = columns.map(function (column) {
             return { type: 'HeaderColumn', inputs: { children: column } };
@@ -91,22 +100,6 @@
         });
         propertyMap.rowTemplate = properties.map(mapProperty);
         return propertyMap;
-    };
-
-    cabal.app = function (result) {
-        return new app(result);
-    };
-
-    app.prototype.Table = function (columnMappings, parent) {
-        var data = this.preRender(columnMappings.properties);
-        React.renderComponent(
-            cabal.components.Table({ headers: columnMappings.headers, data: data }), parent);
-    };
-
-    app.prototype.List = function (columnMappings, parent) {
-        var data = this.preRender(columnMappings.properties);
-        React.renderComponent(
-            cabal.components.List({ labels: columnMappings.labels, data: data }), parent);
     };
 
     if (typeof(root.cabal) === 'undefined') {
