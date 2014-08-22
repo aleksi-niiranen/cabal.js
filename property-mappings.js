@@ -9,12 +9,12 @@ var cabalmap = (function () {
     // columns are not related to property mappings
     // row columns are rendered in the order they are passed to
     // property mappings
-    var headers = cabal.TableColumnHeaders([
+    var headers = cabal.Headers([
         'Project',
         'Due Date',
         'Status',
         'Customer'
-    ]);
+    ], 'HeaderColumn');
 
     // rendered properties
     var pm = cabal.Properties([
@@ -29,11 +29,11 @@ var cabalmap = (function () {
 })();
 
 var caballist = (function () {
-    var labels = cabal.ListItemLabels([
-        'Name',
-        'Title',
-        'Avatar'
-    ]);
+    var labels = cabal.Headers([
+        'Name: ',
+        'Title: ',
+        'Avatar: '
+    ], 'ItemLabel');
 
     var propertymappings = cabal.Properties([
         cabal.mapper.property('DisplayName'),
@@ -41,7 +41,7 @@ var caballist = (function () {
         cabal.mapper.property('PictureURL').as('Image')
     ]);
 
-    return { labels: labels, properties: propertymappings };
+    return { headers: labels, properties: propertymappings };
 })();
 
 var results = [
@@ -145,6 +145,6 @@ var people = [
 ];
 
 (function () {
-    cabal.app(results).Table(cabalmap, document.getElementById('tableGoesHere'));
-    cabal.app(people).List(caballist, document.getElementById('peopleGoesHere'));
+    cabal(cabalmap, cabal.components.Table)(results, document.getElementById('tableGoesHere'));
+    cabal(caballist, cabal.components.List)(people, document.getElementById('peopleGoesHere'));
 })();
