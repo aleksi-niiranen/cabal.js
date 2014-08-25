@@ -12,9 +12,16 @@
         };
     };
 
+    var sortRenderedProperties = function (properties) {
+        var sorted = properties.sort(function (a, b) {
+            return a.ri - b.ri;
+        });
+        return sorted;
+    };
+
     var preRender = function (mappings, result) {
         var data = [];
-        var properties = { rendered: [], all: {} };
+        var properties = { rendered: [], all: {}, sorted: false };
         result.forEach(function (row) {
             if (mappings.propertiesToRender.length === 0) {
                 data.push(rowRenderer(properties, row.Cells.results, mappings));
@@ -31,6 +38,7 @@
             mappings.propertiesToRender.forEach(function (property, index) {
                 if (property !== null) properties.rendered.push({ ri: index });
             });
+            properties.rendered = sortRenderedProperties(properties.rendered);
             data.push(rowRenderer(properties, row.Cells.results, mappings));
             mappings.propertiesToRender = [];
         });
@@ -60,15 +68,8 @@
         return trAttr;
     };
 
-    var rowRenderer = function (propertyInformation, data, mappings) {
-        // seriously unoptimized
-        // we only want to sort once
-        // now we sort once for every row
-        // TODO: optimize
-        var rendered = propertyInformation.rendered.sort(function (a, b) {
-            return a.ri - b.ri;
-        });
-        var row = rendered.map(function (current, index) {
+    var rowRenderer = function (propertyInformation, data, mappings, sort) {
+        var row = propertyInformation.rendered.map(function (current, index) {
             return mappings.rowTemplate[current.ri](data, current, propertyInformation.all);
         });
         return row;
