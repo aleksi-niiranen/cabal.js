@@ -21,26 +21,20 @@
 
     var preRender = function (mappings, result) {
         var data = [];
-        var properties = { rendered: [], all: {}, sorted: false };
-        result.forEach(function (row) {
-            if (mappings.propertiesToRender.length === 0) {
-                data.push(rowRenderer(properties, row.Cells.results, mappings));
-                return;
+
+        var properties = result[0].Cells.results.reduce(function (p, c, i) {
+            var renderingIndex = mappings.propertiesToRender.indexOf(c.Key);
+            if (renderingIndex > -1) {
+                p.rendered.push({ ri: renderingIndex, pi: i });
             }
-            row.Cells.results.forEach(function (mp, index) {
-                var renderingIndex = mappings.propertiesToRender.indexOf(mp.Key);
-                if (renderingIndex > -1) {
-                    properties.rendered.push({ ri: renderingIndex, pi: index});
-                    mappings.propertiesToRender.splice(renderingIndex, 1, null);
-                }
-                properties.all[mp.Key] = index;
-            });
-            mappings.propertiesToRender.forEach(function (property, index) {
-                if (property !== null) properties.rendered.push({ ri: index });
-            });
-            properties.rendered = sortRenderedProperties(properties.rendered);
+            p.all[c.Key] = i;
+            return p;
+        }, { rendered: [], all: {} });
+
+        properties.rendered = sortRenderedProperties(properties.rendered);
+
+        result.forEach(function (row) {
             data.push(rowRenderer(properties, row.Cells.results, mappings));
-            mappings.propertiesToRender = [];
         });
         return data;
     };
@@ -68,7 +62,7 @@
         return trAttr;
     };
 
-    var rowRenderer = function (propertyInformation, data, mappings, sort) {
+    var rowRenderer = function (propertyInformation, data, mappings) {
         var row = propertyInformation.rendered.map(function (current, index) {
             return mappings.rowTemplate[current.ri](data, current, propertyInformation.all);
         });
