@@ -1,5 +1,5 @@
 var cabalmap = (function () {
-    cabal.components.extend('StatusText', function () {
+    cabal.component('StatusText', function () {
         var value = this.props.inputs.children; 
         if (value === 'In Progress') this.props.inputs.className = 'green';
         else if (value === 'Onhold') this.props.inputs.className = 'orange';
@@ -18,10 +18,10 @@ var cabalmap = (function () {
 
     // rendered properties
     var pm = cabal.Properties([
-        cabal.mapper.property('Title').as('Link').attributes({ href: cabal.mapper.property('SiteName') }),
-        cabal.mapper.property('DateOfAction').as('DateTime'),
-        cabal.mapper.property('ProjectStatus').as('StatusText'),
-        cabal.mapper.property('Customer'),
+        cabal.mapper('Title').as('Link').attributes({ href: cabal.mapper('SiteName') }),
+        cabal.mapper('DateOfAction').as('DateTime'),
+        cabal.mapper('ProjectStatus').as('StatusText'),
+        cabal.mapper('Customer'),
     ]);
     // this would be the place to do additional processing on property mappings
     // what ever that is
@@ -36,9 +36,9 @@ var caballist = (function () {
     ], 'ItemLabel');
 
     var propertymappings = cabal.Properties([
-        cabal.mapper.property('DisplayName'),
-        cabal.mapper.property('Title'),
-        cabal.mapper.property('PictureURL').as('Image')
+        cabal.mapper('DisplayName'),
+        cabal.mapper('Title'),
+        cabal.mapper('PictureURL').as('Image')
     ]);
 
     return { headers: labels, properties: propertymappings };
@@ -145,6 +145,6 @@ var people = [
 ];
 
 (function () {
-    cabal(cabalmap, cabal.components.Table)(results, document.getElementById('tableGoesHere'));
-    cabal(caballist, cabal.components.List)(people, document.getElementById('peopleGoesHere'));
+    cabal(cabalmap, cabal.component.container('Table'))(results, document.getElementById('tableGoesHere'));
+    cabal(caballist, cabal.component.container('List'))(people, document.getElementById('peopleGoesHere'));
 })();
