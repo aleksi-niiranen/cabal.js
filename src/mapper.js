@@ -1,6 +1,4 @@
 (function (cabal) {
-    var mod = {};
-
     var CabalProperty = function (name) {
         this.name = name;
         this.componentType = 'Text';
@@ -24,12 +22,12 @@
         return this;
     };
 
-    mod.property = function (name) {
+    var mapProperty = function (name) {
         var p = new CabalProperty(name);
         return p;
     };
 
-    mod.extend = function (name, fn) {
+    mapProperty.extend = function (name, fn) {
         if (typeof(fn) !== 'function')
             throw (new Error("Extensions must be functions."));
         if (CabalProperty.prototype[name] !== undefined)
@@ -38,5 +36,7 @@
         return fn;
     };
 
-    cabal.mapper = mod;
-})(cabal);
+    if (typeof(cabal.mapper) === 'undefined') {
+        cabal.mapper = mapProperty;
+    }
+})(this.cabal);

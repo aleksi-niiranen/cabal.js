@@ -6,6 +6,10 @@
         var cm = columnMappings,
             c = component;
 
+        if (c.isContainer === undefined || c.isContainer === false) {
+            throw (new Error("Component must be a container."));
+        }
+
         return function (result, parent) {
             var data = preRender(cm.properties, result);
             React.renderComponent(c({ headers: cm.headers, data: data }), parent);
@@ -49,15 +53,15 @@
     };
 
     var traverseAttributes = function (attr, data, indexes) {
-        var cstr = cabal.mapper.property().constructor;
+        var cstr = cabal.mapper().constructor;
         var trAttr = {};
-        // TODO: switch to Object.keys?
         for (var key in attr) {
             var value = attr[key];
             if(value instanceof cstr) {
                 trAttr[key] = data[indexes[value.name]].Value;
-            } else
+            } else {
                 trAttr[key] = value;
+            }
         }
         return trAttr;
     };
@@ -69,7 +73,7 @@
         return row;
     };
 
-    var cabal = function cabal (columnMappings, component) {
+    var cabal = function (columnMappings, component) {
         return Cabal(columnMappings, component);
     };
 
