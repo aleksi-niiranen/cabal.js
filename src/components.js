@@ -78,9 +78,8 @@
     });
 
     comp('TableHead', function () {
-        return React.DOM.thead({},
-                               React.DOM.tr({}, this.props.headers.map(function (current) {
-                                   return comp(current.type)({inputs: current.inputs});
+        return React.DOM.thead({}, React.DOM.tr({}, this.props.headers.map(function (current) { 
+            return comp(current.type)({inputs: current.inputs});
         })));
     });
 

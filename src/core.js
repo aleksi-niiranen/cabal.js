@@ -1,6 +1,3 @@
-/**
- * Requires IE9 or later
- */
 (function (root) {
     var addMethod = function (object, name, fn) {
         var old = object[name];
@@ -16,9 +13,8 @@
         var cm = columnMappings,
             c = component;
 
-        if (c.isContainer === undefined || c.isContainer === false) {
+        if (c.isContainer === false)
             throw (new Error("Component must be a container."));
-        }
 
         return function (result, parent) {
             var data = preRender(cm.properties, result);
@@ -38,9 +34,8 @@
 
         var properties = result[0].Cells.results.reduce(function (p, c, i) {
             var renderingIndex = mappings.propertiesToRender.indexOf(c.Key);
-            if (renderingIndex > -1) {
+            if (renderingIndex > -1)
                 p.rendered.push({ ri: renderingIndex, pi: i });
-            }
             p.all[c.Key] = i;
             return p;
         }, { rendered: [], all: {} });
@@ -62,16 +57,20 @@
         }
     };
 
+    var isCabalProperty = function (prop) {
+        if (typeof prop.componentType === 'string' && typeof prop.name === 'string')
+            return true;
+        return false;
+    };
+
     var traverseAttributes = function (attr, data, indexes) {
-        var cstr = cabal.mapper().constructor;
         var trAttr = {};
         for (var key in attr) {
             var value = attr[key];
-            if(value instanceof cstr) {
+            if(isCabalProperty(value))
                 trAttr[key] = data[indexes[value.name]].Value;
-            } else {
+            else
                 trAttr[key] = value;
-            }
         }
         return trAttr;
     };
@@ -91,10 +90,9 @@
 
     cabal.VERSION = "0.3.0";
 
-    cabal.Headers = function (columns, type, fn) {
-        var headers = columns.map(function (column) {
-            return { type: type, 
-                inputs: { children: column } };
+    cabal.Headers = function (titles, type) {
+        var headers = titles.map(function (title) {
+            return { type: type, inputs: { children: title } };
         });
         return headers;
     };
@@ -127,7 +125,6 @@
         components[name].isContainer = isContainer;
     });
 
-    if (typeof(root.cabal) === 'undefined') {
+    if (typeof(root.cabal) === 'undefined')
         root.cabal = cabal;
-    }
 })(this);

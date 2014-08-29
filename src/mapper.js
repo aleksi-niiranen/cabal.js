@@ -22,21 +22,12 @@
         return this;
     };
 
-    var mapProperty = function (name) {
+    var mapper = function (name) {
         var p = new CabalProperty(name);
         return p;
     };
 
-    mapProperty.extend = function (name, fn) {
-        if (typeof(fn) !== 'function')
-            throw (new Error("Extensions must be functions."));
-        if (CabalProperty.prototype[name] !== undefined)
-            throw (new Error("Overriding properties or methods is not allowed."));
-        CabalProperty.prototype[name] = fn;
-        return fn;
-    };
-
     if (typeof(cabal.mapper) === 'undefined') {
-        cabal.mapper = mapProperty;
+        cabal.mapper = mapper;
     }
 })(this.cabal);
