@@ -53,7 +53,7 @@
             var value = property.children === undefined ? data[propertyIndexes.pi].Value : property.children;
             var inputs = traverseAttributes(property.attr, data, allPropertyIndexes);
             inputs.children = value;
-            return { type: property.componentType, element: property.element, inputs: inputs };
+            return { type: property.componentType, inputs: inputs };
         }
     };
 
