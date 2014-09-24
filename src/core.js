@@ -1,24 +1,8 @@
 (function (root) {
-    var addMethod = function (object, name, fn) {
-        var old = object[name];
-        object[name] = function () {
-            if (fn.length === arguments.length)
-                return fn.apply(this, arguments);
-            else if (typeof old === 'function')
-                return old.apply(this, arguments);
-        };
-    };
-
-    var Cabal = function (columnMappings, component) {
-        var cm = columnMappings,
-            c = component;
-
-        if (c.isContainer === false)
-            throw (new Error("Component must be a container."));
-
-        return function (result, parent) {
-            var data = preRender(cm.properties, result);
-            React.renderComponent(c({ headers: cm.headers, data: data }), parent);
+    var Cabal = function (columnMappings) {
+        return function (renderer, result) {
+            var data = preRender(columnMappings.properties, result);
+            renderer(data, columnMappings.headers);
         };
     };
 
@@ -82,49 +66,29 @@
         return row;
     };
 
-    var components = {};
-
-    var cabal = function (columnMappings, component) {
-        return Cabal(columnMappings, component);
+    var cabal = function (properties, headers) {
+        return Cabal({ properties: propertyTransformer(properties),
+                       headers: headerTransformer(headers) });
     };
 
     cabal.VERSION = "0.3.0";
 
-    cabal.Headers = function (titles, type) {
-        var headers = titles.map(function (title) {
-            return { type: type, inputs: { children: title } };
+    var headerTransformer = function (headers) {
+        var transformed = headers.map(function (title) {
+            return { inputs: { children: title } };
         });
-        return headers;
+        return transformed;
     };
 
-    cabal.Properties = function (properties) {
-        var propertyMap = {};
-        propertyMap.propertiesToRender = properties.map(function (property) {
+    var propertyTransformer = function (properties) {
+        var transform = {};
+        transform.propertiesToRender = properties.map(function (property) {
             return property.name;
         });
-        propertyMap.rowTemplate = properties.map(mapProperty);
-        return propertyMap;
+        transform.rowTemplate = properties.map(mapProperty);
+        return transform;
     };
 
-    addMethod(cabal, 'component', function (name) {
-        return components[name];
-    });
-
-    addMethod(cabal, 'component', function (name, renderFn) {
-        cabal.component(name, renderFn, false);
-    });
-
-    addMethod(cabal, 'component', function (name, renderFn, isContainer) {
-        if (typeof(renderFn) !== 'function')
-            throw (new Error("Extensions must be functions."));
-        if (components[name] !== undefined)
-            throw (new Error("Overriding components is not allowed."));
-        components[name] = React.createClass({
-            render: renderFn
-        });
-        components[name].isContainer = isContainer;
-    });
-
-    if (typeof(root.cabal) === 'undefined')
+    if (typeof root.cabal === 'undefined')
         root.cabal = cabal;
 })(this);

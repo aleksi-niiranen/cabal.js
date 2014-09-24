@@ -4,8 +4,14 @@ var gulp = require('gulp'),
     rename = require('gulp-rename');
 
 gulp.task('build', function () {
-    gulp.src(['./src/core.js', './src/utils.js', './src/components.js'])
-        .pipe(concat('cabal.js'))
+    gulp.src(['./src/core.js'])
+        .pipe(rename('cabal.js'))
+        .pipe(gulp.dest('./dist/'))
+        .pipe(uglify())
+        .pipe(rename({suffix: '.min'}))
+        .pipe(gulp.dest('./dist/'));
+    gulp.src(['./src/*.js'])
+        .pipe(concat('cabal-with-utils.js'))
         .pipe(gulp.dest('./dist/'))
         .pipe(uglify())
         .pipe(rename({suffix: '.min'}))

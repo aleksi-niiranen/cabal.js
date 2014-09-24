@@ -1,6 +1,6 @@
 {
   "name": "cabal",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "description": "A library for rendering SharePoint REST search results.",
   "author": "Aleksi Niiranen <aleksi.niiranen@gmail.com>",
   "license": "MIT",
@@ -9,7 +9,6 @@
     "gulp-concat": "^2.2.0",
     "gulp-rename": "^1.2.0",
     "gulp-uglify": "^0.3.0",
-    "react": "^0.10.0"
   },
   "keywords": [
     "sharepoint",
