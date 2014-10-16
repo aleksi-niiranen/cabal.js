@@ -1,9 +1,18 @@
 (function (root) {
     var Cabal = function (columnMappings) {
-        return function (renderer, result) {
-            var data = preRender(columnMappings.properties, result);
+        var isPrerendered = false;
+        var done = function () {
+            isPrerendered = true;
+        };
+        var render = function render (renderer, result) {
+            var data = preRender(columnMappings.properties, result, done);
             renderer(data, columnMappings.headers);
         };
+        Object.defineProperty(render, "isPrerendered", {
+            enumerable: true,
+            get: function () { return isPrerendered; }
+        });
+        return render;
     };
 
     var sortRenderedProperties = function (properties) {
@@ -13,22 +22,25 @@
         return sorted;
     };
 
-    var preRender = function (mappings, result) {
+    var preRender = function (mappings, result, done) {
         var data = [];
 
-        var properties = result[0].Cells.results.reduce(function (p, c, i) {
-            var renderingIndex = mappings.propertiesToRender.indexOf(c.Key);
-            if (renderingIndex > -1)
-                p.rendered.push({ ri: renderingIndex, pi: i });
-            p.all[c.Key] = i;
-            return p;
-        }, { rendered: [], all: {} });
+        if (result.length > 0) {
+            var properties = result[0].Cells.results.reduce(function (p, c, i) {
+                var renderingIndex = mappings.propertiesToRender.indexOf(c.Key);
+                if (renderingIndex > -1)
+                    p.rendered.push({ ri: renderingIndex, pi: i });
+                p.all[c.Key] = i;
+                return p;
+            }, { rendered: [], all: {} });
 
-        properties.rendered = sortRenderedProperties(properties.rendered);
+            properties.rendered = sortRenderedProperties(properties.rendered);
 
-        result.forEach(function (row) {
-            data.push(rowRenderer(properties, row.Cells.results, mappings));
-        });
+            result.forEach(function (row) {
+                data.push(rowRenderer(properties, row.Cells.results, mappings));
+            });
+        }
+        done();
         return data;
     };
 
