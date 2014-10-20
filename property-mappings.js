@@ -18,7 +18,7 @@ var cabalmap = (function () {
     ];
 
     var pm = [
-        mapper('Title').as('Link').attributes({ href: mapper('SiteName') }),
+        mapper('Title').as('a').attributes({ href: mapper('SiteName') }),
         mapper('DateOfAction').as('DateTime'),
         mapper('ProjectStatus').as('StatusText'),
         mapper('Customer'),
