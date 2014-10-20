@@ -1,18 +1,6 @@
 (function (root) {
     var Cabal = function (columnMappings) {
-        var isPrerendered = false;
-        var done = function () {
-            isPrerendered = true;
-        };
-        var render = function render (renderer, result) {
-            var data = preRender(columnMappings.properties, result, done);
-            renderer(data, columnMappings.headers);
-        };
-        Object.defineProperty(render, "isPrerendered", {
-            enumerable: true,
-            get: function () { return isPrerendered; }
-        });
-        return render;
+        return render(columnMappings);
     };
 
     var sortRenderedProperties = function (properties) {
@@ -22,26 +10,53 @@
         return sorted;
     };
 
-    var preRender = function (mappings, result, done) {
-        var data = [];
+    var render = function (colMap) {
+        var _renderable = false, _props, _render, _done;
+        _done = function (p) {
+            _renderable = true;
+            _props = Object.freeze(p);
+            return _props;
+        };
+        _render = function (renderer, result) {
+            var p = preRender.call(_render, colMap.properties, result, _done);
+            var data = onRender(p, result, colMap.properties.rowTemplate);
+            renderer(data, colMap.headers);
+        };
+        Object.defineProperty(_render, "isPrerendered", {
+            get: function () { return _renderable; }
+        });
+        Object.defineProperty(_render, "renderObj", {
+            get: function () { return _props; }
+        });
+        return _render;
+    };
 
+    var onRender = function (props, result, rowTemplate) {
+        var data = [];
+        result.forEach(function (row) {
+            data.push(rowRenderer(props, row.Cells.results, rowTemplate));
+        });
+        return data;
+    };
+
+    var preRender = function (mappings, result, done) {
+        if (this.isPrerendered) return this.renderObj;
+        var props;
         if (result.length > 0) {
-            var properties = result[0].Cells.results.reduce(function (p, c, i) {
+            props = result[0].Cells.results.reduce(function (p, c, i) {
                 var renderingIndex = mappings.propertiesToRender.indexOf(c.Key);
                 if (renderingIndex > -1)
-                    p.rendered.push({ ri: renderingIndex, pi: i });
+                    p.rendered.push(Object.freeze({ ri: renderingIndex, pi: i }));
                 p.all[c.Key] = i;
                 return p;
             }, { rendered: [], all: {} });
 
-            properties.rendered = sortRenderedProperties(properties.rendered);
+            props.rendered = sortRenderedProperties(props.rendered);
+            Object.freeze(props.all);
+            Object.freeze(props.rendered);
 
-            result.forEach(function (row) {
-                data.push(rowRenderer(properties, row.Cells.results, mappings));
-            });
         }
-        done();
-        return data;
+        return done(props || {});
     };
 
     var mapProperty = function (property, index, array) {
@@ -71,9 +86,9 @@
         return trAttr;
     };
 
-    var rowRenderer = function (propertyInformation, data, mappings) {
-        var row = propertyInformation.rendered.map(function (current, index) {
-            return mappings.rowTemplate[current.ri](data, current, propertyInformation.all);
+    var rowRenderer = function (props, data, rowTemplate) {
+        var row = props.rendered.map(function (current, index) {
+            return rowTemplate[current.ri](data, current, props.all);
         });
         return row;
     };
@@ -83,7 +98,7 @@
                        headers: headerTransformer(headers) });
     };
 
-    cabal.VERSION = "0.3.0";
+    cabal.VERSION = "0.4.0";
 
     var headerTransformer = function (headers) {
         var transformed = headers.map(function (title) {
