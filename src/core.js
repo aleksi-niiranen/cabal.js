@@ -11,15 +11,19 @@
     };
 
     var render = function (colMap) {
-        var _renderable = false, _props, _render, _done;
-        _done = function (p) {
+        var _renderable = false, _props, _render, _preR, _last, _onR;
+        _preR = function (p) {
             _renderable = true;
             _props = Object.freeze(p);
             return _props;
         };
+        _onR = function (d) {
+            _last = d;
+            return _last;
+        };
         _render = function (renderer, result) {
-            var p = preRender.call(_render, colMap.properties, result, _done);
-            var data = onRender(p, result, colMap.properties.rowTemplate);
+            var p = preRender.call(_render, colMap.properties, result, _preR);
+            var data = onRender(p, result, colMap.properties.rowTemplate, _onR);
             renderer(data, colMap.headers);
         };
         Object.defineProperty(_render, "isPrerendered", {
@@ -28,15 +32,18 @@
         Object.defineProperty(_render, "renderObj", {
             get: function () { return _props; }
         });
+        Object.defineProperty(_render, "lastRendered", {
+            get: function () { return _last; }
+        });
         return _render;
     };
 
-    var onRender = function (props, result, rowTemplate) {
+    var onRender = function (props, result, rowTemplate, done) {
         var data = [];
         result.forEach(function (row) {
             data.push(rowRenderer(props, row.Cells.results, rowTemplate));
         });
-        return data;
+        return done(data);
     };
 
     var preRender = function (mappings, result, done) {

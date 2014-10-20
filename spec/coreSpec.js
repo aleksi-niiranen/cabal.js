@@ -1,5 +1,5 @@
 describe("Core suite", function () {
-    var oneRenderObj = JSON.parse("{\"rendered\":[{\"ri\":0,\"pi\":0},{\"ri\":1,\"pi\":2},{\"ri\":2,\"pi\":4},{\"ri\":3,\"pi\":1}],\"all\":{\"Title\":0,\"Customer\":1,\"DateOfAction\":2,\"SiteName\":3,\"ProjectStatus\":4}}");
+    var oneRenderObj = {"rendered":[{"ri":0,"pi":0},{"ri":1,"pi":2},{"ri":2,"pi":4},{"ri":3,"pi":1}],"all":{"Title":0,"Customer":1,"DateOfAction":2,"SiteName":3,"ProjectStatus":4}};
     var stubRenderer = function (data, headers) {
         // I don't do anything!
     };
@@ -34,6 +34,7 @@ describe("Core suite", function () {
             var fn1 = cabal([], []);
             fn1.foo = "bar";
             var fn2 = cabal([], []);
+            expect(fn1.foo).toBeDefined();
             expect(fn2.foo).toBeUndefined();
         });
     });

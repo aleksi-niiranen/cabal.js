@@ -1,9 +1,6 @@
 (function (root) {
     var Cabal = function (columnMappings) {
-        return function (renderer, result) {
-            var data = preRender(columnMappings.properties, result);
-            renderer(data, columnMappings.headers);
-        };
+        return render(columnMappings);
     };
 
     var sortRenderedProperties = function (properties) {
@@ -13,23 +10,60 @@
         return sorted;
     };
 
-    var preRender = function (mappings, result) {
-        var data = [];
-
-        var properties = result[0].Cells.results.reduce(function (p, c, i) {
-            var renderingIndex = mappings.propertiesToRender.indexOf(c.Key);
-            if (renderingIndex > -1)
-                p.rendered.push({ ri: renderingIndex, pi: i });
-            p.all[c.Key] = i;
-            return p;
-        }, { rendered: [], all: {} });
-
-        properties.rendered = sortRenderedProperties(properties.rendered);
-
-        result.forEach(function (row) {
-            data.push(rowRenderer(properties, row.Cells.results, mappings));
+    var render = function (colMap) {
+        var _renderable = false, _props, _render, _preR, _last, _onR;
+        _preR = function (p) {
+            _renderable = true;
+            _props = Object.freeze(p);
+            return _props;
+        };
+        _onR = function (d) {
+            _last = d;
+            return _last;
+        };
+        _render = function (renderer, result) {
+            var p = preRender.call(_render, colMap.properties, result, _preR);
+            var data = onRender(p, result, colMap.properties.rowTemplate, _onR);
+            renderer(data, colMap.headers);
+        };
+        Object.defineProperty(_render, "isPrerendered", {
+            get: function () { return _renderable; }
         });
-        return data;
+        Object.defineProperty(_render, "renderObj", {
+            get: function () { return _props; }
+        });
+        Object.defineProperty(_render, "lastRendered", {
+            get: function () { return _last; }
+        });
+        return _render;
+    };
+
+    var onRender = function (props, result, rowTemplate, done) {
+        var data = [];
+        result.forEach(function (row) {
+            data.push(rowRenderer(props, row.Cells.results, rowTemplate));
+        });
+        return done(data);
+    };
+
+    var preRender = function (mappings, result, done) {
+        if (this.isPrerendered) return this.renderObj;
+        var props;
+        if (result.length > 0) {
+            props = result[0].Cells.results.reduce(function (p, c, i) {
+                var renderingIndex = mappings.propertiesToRender.indexOf(c.Key);
+                if (renderingIndex > -1)
+                    p.rendered.push(Object.freeze({ ri: renderingIndex, pi: i }));
+                p.all[c.Key] = i;
+                return p;
+            }, { rendered: [], all: {} });
+
+            props.rendered = sortRenderedProperties(props.rendered);
+            Object.freeze(props.all);
+            Object.freeze(props.rendered);
+
+        }
+        return done(props || {});
     };
 
     var mapProperty = function (property, index, array) {
@@ -59,9 +93,9 @@
         return trAttr;
     };
 
-    var rowRenderer = function (propertyInformation, data, mappings) {
-        var row = propertyInformation.rendered.map(function (current, index) {
-            return mappings.rowTemplate[current.ri](data, current, propertyInformation.all);
+    var rowRenderer = function (props, data, rowTemplate) {
+        var row = props.rendered.map(function (current, index) {
+            return rowTemplate[current.ri](data, current, props.all);
         });
         return row;
     };
@@ -71,7 +105,7 @@
                        headers: headerTransformer(headers) });
     };
 
-    cabal.VERSION = "0.3.0";
+    cabal.VERSION = "0.4.0";
 
     var headerTransformer = function (headers) {
         var transformed = headers.map(function (title) {
