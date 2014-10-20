@@ -1,45 +1,46 @@
 var cabalmap = (function () {
-    cabal.component('StatusText', function () {
-        var value = this.props.inputs.children; 
-        if (value === 'In Progress') this.props.inputs.className = 'green';
-        else if (value === 'Onhold') this.props.inputs.className = 'orange';
-        else this.props.inputs.className = 'red';
-        return (React.DOM.span(this.props.inputs));
+    var mapper = cabalutils.mapper;
+    var comp = reactComponentRepository;
+
+    comp('StatusText', function () {
+        var value = this.props.children; 
+        if (value === 'In Progress') this.props.className = 'green';
+        else if (value === 'Onhold') this.props.className = 'orange';
+        else this.props.className = 'red';
+        return (React.DOM.span(this.props));
     });
-    // columns are not related to property mappings
-    // row columns are rendered in the order they are passed to
-    // property mappings
-    var headers = cabal.Headers([
+
+    var headers = [
         'Project',
         'Due Date',
         'Status',
         'Customer'
-    ], 'HeaderColumn');
+    ];
 
-    // rendered properties
-    var pm = cabal.Properties([
-        cabal.mapper('Title').as('Link').attributes({ href: cabal.mapper('SiteName') }),
-        cabal.mapper('DateOfAction').as('DateTime'),
-        cabal.mapper('ProjectStatus').as('StatusText'),
-        cabal.mapper('Customer'),
-    ]);
-    // this would be the place to do additional processing on property mappings
-    // what ever that is
+    var pm = [
+        mapper('Title').as('Link').attributes({ href: mapper('SiteName') }),
+        mapper('DateOfAction').as('DateTime'),
+        mapper('ProjectStatus').as('StatusText'),
+        mapper('Customer'),
+    ];
+
     return { headers: headers, properties: pm };
 })();
 
 var caballist = (function () {
-    var labels = cabal.Headers([
+    var mapper = cabalutils.mapper;
+
+    var labels = [
         'Name: ',
         'Title: ',
         'Avatar: '
-    ], 'ItemLabel');
+    ];
 
-    var propertymappings = cabal.Properties([
-        cabal.mapper('DisplayName'),
-        cabal.mapper('Title'),
-        cabal.mapper('PictureURL').as('Image')
-    ]);
+    var propertymappings = [
+        mapper('DisplayName'),
+        mapper('Title'),
+        mapper('PictureURL').as('Image')
+    ];
 
     return { headers: labels, properties: propertymappings };
 })();
@@ -145,6 +146,9 @@ var people = [
 ];
 
 (function () {
-    cabal(cabalmap, cabal.component.container('Table'))(results, document.getElementById('tableGoesHere'));
-    cabal(caballist, cabal.component.container('List'))(people, document.getElementById('peopleGoesHere'));
+    var tableRenderer = cabalReactRenderer(reactComponentRepository('Table'), document.getElementById('tableGoesHere'));
+    cabal(cabalmap.properties, cabalmap.headers)(tableRenderer, results);
+
+    var listRenderer = cabalReactRenderer(reactComponentRepository('List'), document.getElementById('peopleGoesHere'));
+    cabal(caballist.properties, caballist.headers)(listRenderer, people);
 })();
