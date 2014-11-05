@@ -69,8 +69,7 @@
     var mapProperty = function (property, index, array) {
         return function (data, propertyIndexes, allPropertyIndexes) {
             var value = property.children === undefined ? data[propertyIndexes.pi].Value : property.children;
-            var inputs = traverseAttributes(property.attr, data, allPropertyIndexes);
-            inputs.children = value;
+            var inputs = reduceAttributes(value, property.attr, data, allPropertyIndexes);
             return { type: property.componentType, inputs: inputs };
         }
     };
@@ -81,16 +80,13 @@
         return false;
     };
 
-    var traverseAttributes = function (attr, data, indexes) {
-        var trAttr = {};
-        for (var key in attr) {
-            var value = attr[key];
-            if(isCabalProperty(value))
-                trAttr[key] = data[indexes[value.name]].Value;
-            else
-                trAttr[key] = value;
-        }
-        return trAttr;
+    var reduceAttributes = function (value, attr, data, indexes) {
+        var r = Object.keys(attr || {}).reduce(function (p, c) {
+            var v = attr[c];
+            p[c] = isCabalProperty(v) ? data[indexes[v.name]].Value : v;
+            return p;
+        }, { children: value });
+        return r;
     };
 
     var rowRenderer = function (props, data, rowTemplate) {
